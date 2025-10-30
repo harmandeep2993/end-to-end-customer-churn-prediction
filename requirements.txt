@@ -7,5 +7,4 @@ matplotlib
 seaborn
 xgboost
 lightgbm
-shap
 streamlit
