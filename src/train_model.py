@@ -1,24 +1,29 @@
 from xgboost import XGBClassifier
 from sklearn.model_selection import RandomizedSearchCV
 
-def train_xgb_model(X_train, y_train, param_dist, n_iter=10, scoring="f1"):
+
+def train_xgb_model(X_train, y_train, param_dist, n_iter=10, scoring='f1'):
     """
-    Train an XGBoost model with RandomizedSearchCV.
+    Train an XGBoost classifier using RandomizedSearchCV.
 
     Parameters:
-    - X_train: Training features
-    - y_train: Training target
-    - param_dist: Dictionary of hyperparameters to search
-    - n_iter: Number of parameter combinations to try
-    - scoring: Evaluation metric for model selection
+        X_train (pd.DataFrame): Training features.
+        y_train (pd.Series): Training target.
+        param_dist (dict): Hyperparameter search space.
+        n_iter (int): Number of search iterations.
+        scoring (str): Metric for model evaluation.
 
     Returns:
-    - best_model: Trained model with best parameters
-    - best_params: Dictionary of best parameters
+        tuple: (best_model, best_params)
     """
-    model = XGBClassifier(use_label_encoder=False, eval_metric="logloss", random_state=42)
+    model = XGBClassifier(
+        use_label_encoder=False,
+        eval_metric='logloss',
+        random_state=42
+    )
+
     search = RandomizedSearchCV(
-        model,
+        estimator=model,
         param_distributions=param_dist,
         n_iter=n_iter,
         scoring=scoring,
@@ -27,5 +32,6 @@ def train_xgb_model(X_train, y_train, param_dist, n_iter=10, scoring="f1"):
         random_state=42,
         n_jobs=-1
     )
+
     search.fit(X_train, y_train)
     return search.best_estimator_, search.best_params_
