@@ -155,8 +155,11 @@ Churn Probability: 22.50%
    * Containerize using Docker for production deployment.
 
 ## Author
-
 Harmandeep Singh
+
 Machine Learning and Data Science Enthusiast
+
 Based in Germany
-[LinkedIn](https://www.linkedin.com/in/harmandeep/) • [GitHub](https://github.com/harmandeep2993)
+
+- [LinkedIn](https://www.linkedin.com/in/harmandeep/) 
+- [GitHub](https://github.com/harmandeep2993)
