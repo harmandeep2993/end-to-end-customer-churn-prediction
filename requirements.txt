@@ -11,3 +11,4 @@ lightgbm
 streamlit
 fastapi
 joblib
+setuptools
