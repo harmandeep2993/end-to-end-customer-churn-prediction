@@ -9,26 +9,36 @@ class ModelTrainer:
     def __init__(self):
         self.logger = get_logger(__name__)
 
-    def train_xgb_model(self, X_train, y_train, param_dist, n_iter=10, scoring='f1'):
+    def train_xgb_model(self, X_train, y_train, n_iter=15, scoring='recall'):
         """
-        Train an XGBoost classifier using RandomizedSearchCV.
+        Train an XGBoost classifier using RandomizedSearchCV optimized for recall.
 
         Parameters:
             X_train (pd.DataFrame): Training features.
-            y_train (pd.Series): Training target.
-            param_dist (dict): Hyperparameter search space.
-            n_iter (int): Number of search iterations.
-            scoring (str): Metric for model evaluation.
+            y_train (pd.Series): Training labels.
+            n_iter (int): Number of random search iterations.
+            scoring (str): Evaluation metric (default = recall).
 
         Returns:
             tuple: (best_model, best_params)
         """
-        self.logger.info("Initializing XGBoost model training with hyperparameter tuning.")
+        self.logger.info("Initializing XGBoost model training with hyperparameter tuning (recall focus).")
+
+        # Define parameter space tuned for recall and imbalance
+        param_dist = {
+            "n_estimators": [200, 300, 400],
+            "max_depth": [3, 4, 5, 6],
+            "learning_rate": [0.01, 0.05, 0.1],
+            "subsample": [0.6, 0.8, 1.0],
+            "colsample_bytree": [0.6, 0.8, 1.0],
+            "scale_pos_weight": [2, 3, 4],  # important for class imbalance
+        }
 
         model = XGBClassifier(
+            eval_metric="logloss",
             use_label_encoder=False,
-            eval_metric='logloss',
-            random_state=42
+            random_state=42,
+            tree_method="hist",
         )
 
         search = RandomizedSearchCV(
@@ -39,7 +49,7 @@ class ModelTrainer:
             cv=3,
             verbose=1,
             random_state=42,
-            n_jobs=-1
+            n_jobs=-1,
         )
 
         try:
@@ -48,9 +58,10 @@ class ModelTrainer:
             best_params = search.best_params_
             self.logger.info(f"Model training complete. Best parameters: {best_params}")
             return best_model, best_params
+
         except Exception as e:
             self.logger.error(f"Error during model training: {e}")
             raise
 
 if __name__ == "__main__":
-    print("ModelTrainer module is ready for import.")
+    print("ModelTrainer module ready for import.")
